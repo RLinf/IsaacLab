@@ -16,6 +16,8 @@ from isaaclab.managers import SceneEntityCfg
 from isaaclab.managers import TerminationTermCfg as DoneTerm
 from isaaclab.scene import InteractiveSceneCfg
 from isaaclab.utils import configclass
+from isaaclab.sensors import TiledCameraCfg
+
 
 ##
 # Pre-defined configs
@@ -62,3 +64,35 @@ class FrankaCubeStackVisuomotorRewardedEnvCfg(FrankaCubeStackVisuomotorEnvCfg):
     def __post_init__(self):
         super().__post_init__()
         self.sim.render_interval = 5   # set render interval as the same as the decimation interval
+
+        # Set cameras
+        # Set wrist camera
+        self.scene.wrist_cam = TiledCameraCfg(
+            prim_path="{ENV_REGEX_NS}/Robot/panda_hand/wrist_cam",
+            update_period=0.0,
+            height=200,
+            width=200,
+            data_types=["rgb", "distance_to_image_plane"],
+            spawn=sim_utils.PinholeCameraCfg(
+                focal_length=24.0, focus_distance=400.0, horizontal_aperture=20.955, clipping_range=(0.1, 2)
+            ),
+            offset=TiledCameraCfg.OffsetCfg(
+                pos=(0.13, 0.0, -0.15), rot=(-0.70614, 0.03701, 0.03701, -0.70614), convention="ros"
+            ),
+        )
+
+        # Set table view camera
+        self.scene.table_cam = TiledCameraCfg(
+            prim_path="{ENV_REGEX_NS}/table_cam",
+            update_period=0.0,
+            height=200,
+            width=200,
+            data_types=["rgb", "distance_to_image_plane"],
+            spawn=sim_utils.PinholeCameraCfg(
+                focal_length=24.0, focus_distance=400.0, horizontal_aperture=20.955, clipping_range=(0.1, 2)
+            ),
+            offset=TiledCameraCfg.OffsetCfg(
+
+                pos=(1.0, 0.0, 0.4), rot=(0.35355, -0.61237, -0.61237, 0.35355), convention="ros"
+            ),
+        )
